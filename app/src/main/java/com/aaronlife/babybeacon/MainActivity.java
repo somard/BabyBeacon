@@ -8,19 +8,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +22,11 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,8 +97,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActionBar bar = getSupportActionBar();
-        bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f44336")));
+        //  ActionBar bar = getSupportActionBar();
+        // bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f44336")));
 
         // 顯示版本名稱
         TextView txtVersion = (TextView)findViewById(R.id.version);
@@ -142,10 +140,10 @@ public class MainActivity extends AppCompatActivity
     {
         switch(item.getItemId())
         {
-        case R.id.menu_refresh:
-            devices.clear();
-            deviceListAdapter.notifyDataSetChanged();
-            break;
+            case R.id.menu_refresh:
+                devices.clear();
+                deviceListAdapter.notifyDataSetChanged();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -203,8 +201,8 @@ public class MainActivity extends AppCompatActivity
     public void checkDiscoveryPermissions()
     {
         if(ContextCompat.checkSelfPermission(this,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION)
-                                    == PackageManager.PERMISSION_GRANTED)
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED)
         {
             // 啟動BLE Central掃瞄
             if(BleCentral.getInstance(this) != null)
@@ -230,23 +228,23 @@ public class MainActivity extends AppCompatActivity
     {
         switch(requestCode)
         {
-        case REQUEST_DISCOVERY_PERMISSIONS:
-            if(grantResults.length >= 1 &&
-               permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION) &&
-               grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                // 啟動BLE Central掃瞄
-                if(BleCentral.getInstance(this) != null)
-                    BleCentral.getInstance(this).start();
+            case REQUEST_DISCOVERY_PERMISSIONS:
+                if(grantResults.length >= 1 &&
+                        permissions[0].equals(Manifest.permission.ACCESS_COARSE_LOCATION) &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    // 啟動BLE Central掃瞄
+                    if(BleCentral.getInstance(this) != null)
+                        BleCentral.getInstance(this).start();
 
-                // 啟動BLE Peripheral廣播
-                if(BlePeripheral.getInstance(this) != null)
-                    BlePeripheral.getInstance(this).start();
-            }
-            else
-            {
-                Toast.makeText(this, "無法取得定位服務權限", Toast.LENGTH_LONG).show();
-            }
+                    // 啟動BLE Peripheral廣播
+                    if(BlePeripheral.getInstance(this) != null)
+                        BlePeripheral.getInstance(this).start();
+                }
+                else
+                {
+                    Toast.makeText(this, "無法取得定位服務權限", Toast.LENGTH_LONG).show();
+                }
         }
     }
 
@@ -270,7 +268,7 @@ public class MainActivity extends AppCompatActivity
     public void vibrate(String deviceName)
     {
         Vibrator vibrator =
-            (Vibrator)getApplication().getSystemService(Service.VIBRATOR_SERVICE);
+                (Vibrator)getApplication().getSystemService(Service.VIBRATOR_SERVICE);
         vibrator.vibrate(500);
 
         addMessage("已經向 " + deviceName + " 發出聲音");
@@ -343,7 +341,7 @@ public class MainActivity extends AppCompatActivity
                     (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
             if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
-               !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+                    !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
             {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("定位服務尚未開啟，無法掃描裝置，是否要進行設定？");
@@ -353,20 +351,20 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int id)
                     {
                         Intent it =
-                            new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
                         startActivityForResult(it, LOCATION_REUEST_CODE);
                     }
                 });
 
                 builder.setNegativeButton("不要",
-                                          new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        dialog.cancel();
-                    }
-                });
+                        new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                dialog.cancel();
+                            }
+                        });
 
                 builder.show();
 
