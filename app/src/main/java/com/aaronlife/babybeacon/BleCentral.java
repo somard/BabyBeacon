@@ -15,10 +15,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
